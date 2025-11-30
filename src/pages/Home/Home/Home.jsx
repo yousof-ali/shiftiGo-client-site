@@ -7,6 +7,7 @@ import Brands from '../Brands/Brands'
 import Support from '../Support/Support'
 import Marchant from '../Marchant/Marchant'
 import Review from '../Review/Review'
+import Faq from '../Faq/Faq'
 
 const Home = () => {
   return (
@@ -18,6 +19,7 @@ const Home = () => {
       <Support/>
       <Marchant/>
       <Review/>
+      <Faq/>
     </div>
     </div>
   )
