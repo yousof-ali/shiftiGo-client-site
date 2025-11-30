@@ -53,7 +53,7 @@ const OurServices = () => {
 
 
   return (
-    <div className="bg-[#08373c] p-8 rounded-2xl lg:p-16">
+    <div className="bg-[#08373c] p-8 mx-2 rounded-2xl lg:p-16">
       <h2 className="md:text-4xl  text-white text-2xl text-center">
         Our Services
       </h2>
