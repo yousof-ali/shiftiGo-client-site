@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import SocialLogin from "../SocialLogin/SocialLogin";
 
-const Login = () => {
-  const { user, singInUser } = useAuth();
+const SignUp = () => {
+  const { user, createUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    singInUser(data.email, data.password)
+    createUser(data.email, data.password)
       .then((res) => {
         console.log(res.user);
         navigate(location?.state ? location.state : "/");
@@ -34,8 +34,18 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-8">
-          Welcome Back!
+          Create Your Account!
         </h2>
+        <div className="flex flex-col mb-3 gap-1">
+          <label className="label">Name</label>
+          <input
+            type="text"
+            className="p-3 rounded-md   border"
+            placeholder="Name"
+            {...register("name", { required: true })}
+          />
+        </div>
+
         <div className="flex flex-col gap-1">
           <label className="label">Email</label>
           <input
@@ -67,24 +77,20 @@ const Login = () => {
             </p>
           )}
         </div>
-        <div className="mt-2">
-          <a className="link link-hover ">Forgot password?</a>
-        </div>
-
-        <Button className={"w-full mt-6 py-6"}>Log In</Button>
+        <Button className={"w-full mt-6 py-6"}>Sign Up</Button>
       </form>
 
-      <div className="sm:max-w-sm  w-full mx-auto">
-        <p className="teaxt-sm mt-6">
-          Create a Account{" "}
-          <Link to={"/sign-up"} className="btn btn-link ">
-            Sign Up
+      <div className="max-w-sm w-full mx-auto">
+        <p className="teaxt-sm mt-3">
+          Already have an Account{" "}
+          <Link to={"/login"} className="btn btn-link ">
+            Log In
           </Link>
         </p>
-        <SocialLogin />
+        <SocialLogin></SocialLogin>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;
