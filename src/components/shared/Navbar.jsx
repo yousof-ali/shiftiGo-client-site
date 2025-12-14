@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
+  
 
   
   useEffect(() => {
