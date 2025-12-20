@@ -1,15 +1,41 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "../ui/button";
 import Container from "./Container";
-import { NavLink } from "react-router"; 
+import { NavLink } from "react-router";
 import { Menu, X } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
+import toast from "react-hot-toast";
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
+  const { user ,logOut} = useAuth();
   
 
-  
+  const linksData = [
+    {
+      name: "Home",
+      route: "/",
+    },
+    {
+      name: "Services",
+      route: "/services",
+    },
+    {
+      name: "Send a Parcel",
+      route: "/sendParcel",
+    },
+    {
+      name: "Coverage",
+      route: "/covarage",
+    },
+    {
+      name: "Pricing",
+      route: "pricing",
+    },
+  ];
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -28,13 +54,12 @@ const Navbar = () => {
 
   const links = (
     <>
-      {["Home", "Services", "Coverage", "Pricing"].map((name) => {
-        const path = name === "Home" ? "/" : `/${name.toLowerCase()}`;
+      {linksData.map((name) => {
         return (
-          <li key={name}>
+          <li key={name.name}>
             <NavLink
-              to={path}
-              onClick={() => setIsOpen(false)} 
+              to={name.route}
+              onClick={() => setIsOpen(false)}
               className={({ isActive }) =>
                 `block py-2 md:text-lg transition-colors ${
                   isActive
@@ -43,13 +68,20 @@ const Navbar = () => {
                 }`
               }
             >
-              {name}
+              {name.name}
             </NavLink>
           </li>
         );
       })}
     </>
   );
+
+  const handleLogout = () => {
+     logOut()
+     .then(_ => {
+      toast.success("Log out Success!")
+     })
+  }
 
   return (
     <div className="py-4 border-b relative">
@@ -71,8 +103,14 @@ const Navbar = () => {
 
           {/* Buttons */}
           <div className="flex gap-2">
-            <Button variant="outline">Sign In</Button>
-            <Button className={"hidden md:block"}>Be a rider</Button>
+            {user ? (
+              <Button onClick={handleLogout}>Log Out</Button>
+            ) : (
+              <>
+                <Button variant="outline">Sign In</Button>
+                <Button className={"hidden md:block"}>Be a rider</Button>
+              </>
+            )}
           </div>
         </div>
       </Container>
@@ -108,10 +146,16 @@ const Navbar = () => {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 mt-6">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Sign In
-            </Button>
-            <Button onClick={() => setIsOpen(false)}>Be a rider</Button>
+            {user ? (
+              <Button onClick={handleLogout}>Log Out</Button>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => setIsOpen(false)}>
+                  Sign In
+                </Button>
+                <Button onClick={() => setIsOpen(false)}>Be a rider</Button>
+              </>
+            )}
           </div>
         </div>
       </div>

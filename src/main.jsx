@@ -6,6 +6,7 @@ import { router } from "./router/Router.jsx";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import Authprovider from "./context/authContext/Authprovider";
+import { Toaster } from "react-hot-toast";
 
 Aos.init();
 
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")).render(
     <div className="font-urbanist">
       <Authprovider>
         <RouterProvider router={router} />
+        <Toaster position="top-center" reverseOrder={false} />
       </Authprovider>
     </div>
   </StrictMode>
