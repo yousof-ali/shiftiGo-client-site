@@ -20,10 +20,15 @@ const Login = () => {
     singInUser(data.email, data.password)
       .then((res) => {
         console.log(res.user);
-        navigate(location?.state ? location.state : "/");
+        
+        // Check if location state exists and has a 'from' property
+        const redirectPath = location.state?.from || "/";
+        navigate(redirectPath);
       })
       .catch((err) => {
         console.log(err.message);
+        // You might want to show an error message to the user here
+        alert("Login failed: " + err.message);
       });
   };
 
@@ -81,7 +86,7 @@ const Login = () => {
             Sign Up
           </Link>
         </p>
-        <SocialLogin />
+        <SocialLogin location={location} />
       </div>
     </div>
   );

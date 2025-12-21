@@ -22,6 +22,7 @@ export const router = createBrowserRouter([
         path:"coverage",
         Component:Coverage
       },
+      
       {
         path: "sendParcel",
         element: (

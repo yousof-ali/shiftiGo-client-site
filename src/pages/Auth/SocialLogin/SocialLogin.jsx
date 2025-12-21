@@ -11,7 +11,8 @@ const SocialLogin = () => {
     singInWithGoogle()
       .then((res) => {
         console.log(res.user);
-        navigate(location?.state ? location.state : "/");
+        const redirectPath = location.state?.from || "/";
+        navigate(redirectPath);
       })
       .catch((err) => {
         console.log(err.message);

@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")).render(
     <div className="font-urbanist">
       <Authprovider>
         <RouterProvider router={router} />
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster position="top-right" reverseOrder={false} />
       </Authprovider>
     </div>
   </StrictMode>

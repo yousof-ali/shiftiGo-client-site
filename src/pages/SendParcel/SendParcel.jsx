@@ -1,12 +1,162 @@
 import Container from "@/components/shared/Container";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import toast from "react-hot-toast";
 
 const SendParcel = () => {
-   const [parcelType, setParcelType] = useState("document")
+  const [parcelType, setParcelType] = useState("document");
+  const [senderServiceCenters, setSenderServiceCenters] = useState([]);
+  const [receiverServiceCenters, setReceiverServiceCenters] = useState([]);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    resetField,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      parcelType: "document",
+      parcelName: "",
+      parcelWeight: "",
+      senderName: "",
+      senderAddress: "",
+      senderContact: "",
+      senderRegion: "",
+      senderServiceCenter: "",
+      pickupInstruction: "",
+      receiverName: "",
+      receiverAddress: "",
+      receiverContact: "",
+      receiverRegion: "",
+      receiverServiceCenter: "",
+      deliveryInstruction: "",
+    },
+  });
+
+  const watchParcelType = watch("parcelType");
+  const watchSenderRegion = watch("senderRegion");
+  const watchReceiverRegion = watch("receiverRegion");
+
+  // Regions data
+  const regions = [
+    { id: "dhaka", name: "Dhaka" },
+    { id: "khulna", name: "Khulna" },
+    { id: "rangpur", name: "Rangpur" },
+    { id: "chittagong", name: "Chittagong" },
+    { id: "sylhet", name: "Sylhet" },
+    { id: "barisal", name: "Barisal" },
+    { id: "mymensingh", name: "Mymensingh" },
+    { id: "rajshahi", name: "Rajshahi" },
+  ];
+
+  // Service Centers data by region
+  const serviceCentersByRegion = {
+    dhaka: [
+      { id: "dhaka-central", name: "Dhaka Central Service Center" },
+      { id: "gazipur", name: "Gazipur Service Center" },
+      { id: "narayanganj", name: "Narayanganj Service Center" },
+      { id: "narsingdi", name: "Narsingdi Service Center" },
+      { id: "tangail", name: "Tangail Service Center" },
+      { id: "kishoreganj", name: "Kishoreganj Service Center" },
+    ],
+    khulna: [
+      { id: "khulna-central", name: "Khulna Central Service Center" },
+      { id: "bagerhat", name: "Bagerhat Service Center" },
+      { id: "satkhira", name: "Satkhira Service Center" },
+      { id: "jessore", name: "Jessore Service Center" },
+      { id: "jhenaidah", name: "Jhenaidah Service Center" },
+    ],
+    rangpur: [
+      { id: "rangpur-central", name: "Rangpur Central Service Center" },
+      { id: "dinajpur", name: "Dinajpur Service Center" },
+      { id: "gaibandha", name: "Gaibandha Service Center" },
+      { id: "kurigram", name: "Kurigram Service Center" },
+      { id: "lalmonirhat", name: "Lalmonirhat Service Center" },
+    ],
+    chittagong: [
+      { id: "chittagong-central", name: "Chittagong Central Service Center" },
+      { id: "coxsbazar", name: "Cox's Bazar Service Center" },
+      { id: "comilla", name: "Comilla Service Center" },
+      { id: "feni", name: "Feni Service Center" },
+      { id: "brahmanbaria", name: "Brahmanbaria Service Center" },
+    ],
+    sylhet: [
+      { id: "sylhet-central", name: "Sylhet Central Service Center" },
+      { id: "moulvibazar", name: "Moulvibazar Service Center" },
+      { id: "habiganj", name: "Habiganj Service Center" },
+      { id: "sunamganj", name: "Sunamganj Service Center" },
+    ],
+    barisal: [
+      { id: "barisal-central", name: "Barisal Central Service Center" },
+      { id: "bhola", name: "Bhola Service Center" },
+      { id: "patuakhali", name: "Patuakhali Service Center" },
+      { id: "pirojpur", name: "Pirojpur Service Center" },
+    ],
+    mymensingh: [
+      { id: "mymensingh-central", name: "Mymensingh Central Service Center" },
+      { id: "netrokona", name: "Netrokona Service Center" },
+      { id: "jamalpur", name: "Jamalpur Service Center" },
+      { id: "sherpur", name: "Sherpur Service Center" },
+    ],
+    rajshahi: [
+      { id: "rajshahi-central", name: "Rajshahi Central Service Center" },
+      { id: "bogra", name: "Bogra Service Center" },
+      { id: "joypurhat", name: "Joypurhat Service Center" },
+      { id: "naogaon", name: "Naogaon Service Center" },
+      { id: "natore", name: "Natore Service Center" },
+    ],
+  };
+
+  // Update service centers when region changes
+  useEffect(() => {
+    if (watchSenderRegion) {
+      setSenderServiceCenters(serviceCentersByRegion[watchSenderRegion] || []);
+    } else {
+      setSenderServiceCenters([]);
+    }
+  }, [watchSenderRegion]);
+
+  useEffect(() => {
+    if (watchReceiverRegion) {
+      setReceiverServiceCenters(serviceCentersByRegion[watchReceiverRegion] || []);
+    } else {
+      setReceiverServiceCenters([]);
+    }
+  }, [watchReceiverRegion]);
+
+  // Handle parcel type change
+  const handleParcelTypeChange = (type) => {
+    setParcelType(type);
+    if (type === "document") {
+      resetField("parcelWeight");
+    }
+  };
+
+  // Form submission handler
+  const onSubmit = (data) => {
+    // Create the array of form data
+    // const formDataArray = Object.entries(data).map(([key, value]) => ({
+    //   field: key,
+    //   value: value || "",
+    // }));
+
+    console.log("Form Data Array:", data);
+    console.log("Complete Form Data:", data);
+
+    // Here you can send the data to your API
+    // For example:
+    // await submitParcel(data);
+    
+    toast.success("Form submitted successfully!");
+  };
+
   return (
     <Container className={"py-12"}>
-      <h2 className="text-2xl mb-8 md:text-4xl font-semibold">Add Parcel</h2>
-      <form action="">
+      <h2 className="mb-8 text-2xl font-semibold md:text-4xl">Add Parcel</h2>
+      
+      <form onSubmit={handleSubmit(onSubmit)}>
         <h1 className="mb-6 text-2xl font-semibold text-gray-900">
           Enter your parcel details
         </h1>
@@ -15,29 +165,46 @@ const SendParcel = () => {
         <div className="mb-8 flex gap-6">
           <label className="flex cursor-pointer items-center gap-2">
             <div className="relative">
-              <input
-                type="radio"
-                name="parcel-type"
-                className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:border-[#65a30d] checked:border-[6px]"
-                checked={parcelType === "document"}
-                onChange={() => setParcelType("document")}
+              <Controller
+                name="parcelType"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    type="radio"
+                    value="document"
+                    checked={field.value === "document"}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      handleParcelTypeChange("document");
+                    }}
+                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:border-[#65a30d] checked:border-[6px]"
+                  />
+                )}
               />
             </div>
             <span className="text-sm font-medium text-gray-700">Document</span>
           </label>
+
           <label className="flex cursor-pointer items-center gap-2">
             <div className="relative">
-              <input
-                type="radio"
-                name="parcel-type"
-                className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:border-[#65a30d] checked:border-[6px]"
-                checked={parcelType === "not-document"}
-                onChange={() => setParcelType("not-document")}
+              <Controller
+                name="parcelType"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    type="radio"
+                    value="not-document"
+                    checked={field.value === "not-document"}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      handleParcelTypeChange("not-document");
+                    }}
+                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:border-[#65a30d] checked:border-[6px]"
+                  />
+                )}
               />
             </div>
-            <span className="text-sm font-medium text-gray-700">
-              Not-Document
-            </span>
+            <span className="text-sm font-medium text-gray-700">Non-Document</span>
           </label>
         </div>
 
@@ -45,23 +212,46 @@ const SendParcel = () => {
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-900">
-              Parcel Name
+              Parcel Name *
             </label>
             <input
               type="text"
               placeholder="Parcel Name"
-              className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
+              {...register("parcelName", {
+                required: "Parcel name is required",
+              })}
+              className={`w-full rounded-md border ${errors.parcelName ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
             />
+            {errors.parcelName && (
+              <p className="mt-1 text-sm text-red-500">{errors.parcelName.message}</p>
+            )}
           </div>
+
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-900">
-              Parcel Weight (KG)
+              Parcel Weight (KG) {watchParcelType === "not-document" && "*"}
             </label>
             <input
-              type="text"
+              type="number"
+              step="0.01"
               placeholder="Parcel Weight (KG)"
-              className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
+              disabled={watchParcelType === "document"}
+              {...register("parcelWeight", {
+                required: watchParcelType === "not-document" ? "Parcel weight is required for non-document" : false,
+                min: watchParcelType === "not-document" ? {
+                  value: 0.1,
+                  message: "Weight must be at least 0.1 KG"
+                } : undefined,
+                max: watchParcelType === "not-document" ? {
+                  value: 50,
+                  message: "Weight cannot exceed 50 KG"
+                } : undefined,
+              })}
+              className={`w-full rounded-md border ${errors.parcelWeight ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 disabled:opacity-50`}
             />
+            {errors.parcelWeight && (
+              <p className="mt-1 text-sm text-red-500">{errors.parcelWeight.message}</p>
+            )}
           </div>
         </div>
 
@@ -69,101 +259,136 @@ const SendParcel = () => {
         <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Sender Details */}
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Sender Details
-            </h2>
-
+            <h2 className="text-lg font-semibold text-gray-900">Sender Details</h2>
+            
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Sender Name
+                  Sender Name *
                 </label>
                 <input
                   type="text"
                   placeholder="Sender Name"
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  {...register("senderName", {
+                    required: "Sender name is required",
+                  })}
+                  className={`w-full rounded-md border ${errors.senderName ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
                 />
+                {errors.senderName && (
+                  <p className="mt-1 text-sm text-red-500">{errors.senderName.message}</p>
+                )}
               </div>
+              
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Sender Pickup Wire house
-                </label>
-                <div className="relative">
-                  <select className="w-full appearance-none rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300">
-                    <option>Select Wire house</option>
-                    <option>Warehouse 1</option>
-                    <option>Warehouse 2</option>
-                    <option>Warehouse 3</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <svg
-                      className="h-4 w-4 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Address
+                  Sender Contact No *
                 </label>
                 <input
-                  type="text"
-                  placeholder="Address"
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Sender Contact No
-                </label>
-                <input
-                  type="text"
+                  type="tel"
                   placeholder="Sender Contact No"
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  {...register("senderContact", {
+                    required: "Contact number is required",
+                    pattern: {
+                      value: /^[0-9]{10,11}$/,
+                      message: "Please enter a valid contact number"
+                    }
+                  })}
+                  className={`w-full rounded-md border ${errors.senderContact ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
                 />
+                {errors.senderContact && (
+                  <p className="mt-1 text-sm text-red-500">{errors.senderContact.message}</p>
+                )}
               </div>
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
-                Your Region
+                Your Region *
               </label>
               <div className="relative">
-                <select className="w-full appearance-none rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300">
-                  <option>Select your region</option>
-                  <option>Region 1</option>
-                  <option>Region 2</option>
-                  <option>Region 3</option>
-                </select>
+                <Controller
+                  name="senderRegion"
+                  control={control}
+                  rules={{ required: "Region selection is required" }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        resetField("senderServiceCenter");
+                      }}
+                      className={`w-full appearance-none rounded-md border ${errors.senderRegion ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
+                    >
+                      <option value="">Select your region</option>
+                      {regions.map((region) => (
+                        <option key={region.id} value={region.id}>
+                          {region.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
                 <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <svg
-                    className="h-4 w-4 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
+                  <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
+              {errors.senderRegion && (
+                <p className="mt-1 text-sm text-red-500">{errors.senderRegion.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Service Center *
+              </label>
+              <div className="relative">
+                <Controller
+                  name="senderServiceCenter"
+                  control={control}
+                  rules={{ required: "Service center selection is required" }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      disabled={!watchSenderRegion}
+                      className={`w-full appearance-none rounded-md border ${errors.senderServiceCenter ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 disabled:opacity-50`}
+                    >
+                      <option value="">Select service center</option>
+                      {senderServiceCenters.map((center) => (
+                        <option key={center.id} value={center.id}>
+                          {center.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+              {errors.senderServiceCenter && (
+                <p className="mt-1 text-sm text-red-500">{errors.senderServiceCenter.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Address *
+              </label>
+              <input
+                type="text"
+                placeholder="Address"
+                {...register("senderAddress", {
+                  required: "Address is required",
+                })}
+                className={`w-full rounded-md border ${errors.senderAddress ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
+              />
+              {errors.senderAddress && (
+                <p className="mt-1 text-sm text-red-500">{errors.senderAddress.message}</p>
+              )}
             </div>
 
             <div>
@@ -173,6 +398,7 @@ const SendParcel = () => {
               <textarea
                 placeholder="Pickup Instruction"
                 rows={4}
+                {...register("pickupInstruction")}
                 className="w-full resize-none rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
               />
             </div>
@@ -180,101 +406,136 @@ const SendParcel = () => {
 
           {/* Receiver Details */}
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Receiver Details
-            </h2>
-
+            <h2 className="text-lg font-semibold text-gray-900">Receiver Details</h2>
+            
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Receiver Name
+                  Receiver Name *
                 </label>
                 <input
                   type="text"
-                  placeholder="Sender Name"
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  placeholder="Receiver Name"
+                  {...register("receiverName", {
+                    required: "Receiver name is required",
+                  })}
+                  className={`w-full rounded-md border ${errors.receiverName ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
                 />
+                {errors.receiverName && (
+                  <p className="mt-1 text-sm text-red-500">{errors.receiverName.message}</p>
+                )}
               </div>
+              
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Receiver Delivery Wire house
-                </label>
-                <div className="relative">
-                  <select className="w-full appearance-none rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300">
-                    <option>Select Wire house</option>
-                    <option>Warehouse 1</option>
-                    <option>Warehouse 2</option>
-                    <option>Warehouse 3</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <svg
-                      className="h-4 w-4 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Receiver Address
+                  Receiver Contact No *
                 </label>
                 <input
-                  type="text"
-                  placeholder="Address"
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  type="tel"
+                  placeholder="Receiver Contact No"
+                  {...register("receiverContact", {
+                    required: "Receiver contact number is required",
+                    pattern: {
+                      value: /^[0-9]{10,11}$/,
+                      message: "Please enter a valid contact number"
+                    }
+                  })}
+                  className={`w-full rounded-md border ${errors.receiverContact ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
                 />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-900">
-                  Receiver Contact No
-                </label>
-                <input
-                  type="text"
-                  placeholder="Sender Contact No"
-                  className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                />
+                {errors.receiverContact && (
+                  <p className="mt-1 text-sm text-red-500">{errors.receiverContact.message}</p>
+                )}
               </div>
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
-                Receiver Region
+                Receiver Region *
               </label>
               <div className="relative">
-                <select className="w-full appearance-none rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300">
-                  <option>Select your region</option>
-                  <option>Region 1</option>
-                  <option>Region 2</option>
-                  <option>Region 3</option>
-                </select>
+                <Controller
+                  name="receiverRegion"
+                  control={control}
+                  rules={{ required: "Receiver region is required" }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        resetField("receiverServiceCenter");
+                      }}
+                      className={`w-full appearance-none rounded-md border ${errors.receiverRegion ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
+                    >
+                      <option value="">Select receiver region</option>
+                      {regions.map((region) => (
+                        <option key={region.id} value={region.id}>
+                          {region.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
                 <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <svg
-                    className="h-4 w-4 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
+                  <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
+              {errors.receiverRegion && (
+                <p className="mt-1 text-sm text-red-500">{errors.receiverRegion.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Service Center *
+              </label>
+              <div className="relative">
+                <Controller
+                  name="receiverServiceCenter"
+                  control={control}
+                  rules={{ required: "Service center selection is required" }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      disabled={!watchReceiverRegion}
+                      className={`w-full appearance-none rounded-md border ${errors.receiverServiceCenter ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 pr-10 text-sm text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 disabled:opacity-50`}
+                    >
+                      <option value="">Select service center</option>
+                      {receiverServiceCenters.map((center) => (
+                        <option key={center.id} value={center.id}>
+                          {center.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+              {errors.receiverServiceCenter && (
+                <p className="mt-1 text-sm text-red-500">{errors.receiverServiceCenter.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Receiver Address *
+              </label>
+              <input
+                type="text"
+                placeholder="Receiver Address"
+                {...register("receiverAddress", {
+                  required: "Receiver address is required",
+                })}
+                className={`w-full rounded-md border ${errors.receiverAddress ? 'border-red-500' : 'border-gray-200'} bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300`}
+              />
+              {errors.receiverAddress && (
+                <p className="mt-1 text-sm text-red-500">{errors.receiverAddress.message}</p>
+              )}
             </div>
 
             <div>
@@ -284,6 +545,7 @@ const SendParcel = () => {
               <textarea
                 placeholder="Delivery Instruction"
                 rows={4}
+                {...register("deliveryInstruction")}
                 className="w-full resize-none rounded-md border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
               />
             </div>
@@ -291,12 +553,13 @@ const SendParcel = () => {
         </div>
 
         {/* Pickup Time Note */}
-        <p className="mb-6 text-sm text-gray-600">
-          * PickUp Time 4pm-7pm Approx.
-        </p>
+        <p className="mb-6 text-sm text-gray-600">* PickUp Time 4pm-7pm Approx.</p>
 
         {/* Submit Button */}
-        <button className="rounded-md bg-[#84cc16] px-8 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-[#65a30d]">
+        <button
+          type="submit"
+          className="rounded-md bg-[#84cc16] px-8 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-[#65a30d]"
+        >
           Proceed to Confirm Booking
         </button>
       </form>
