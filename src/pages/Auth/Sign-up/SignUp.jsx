@@ -4,6 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const { user, createUser } = useAuth();
@@ -19,11 +20,12 @@ const SignUp = () => {
   const onSubmit = (data) => {
     createUser(data.email, data.password)
       .then((res) => {
-        console.log(res.user);
+        toast.success("Account create successfully!")
         navigate(location?.state ? location.state : "/");
       })
       .catch((err) => {
         console.log(err.message);
+        toast.error(err.message);
       });
   };
 

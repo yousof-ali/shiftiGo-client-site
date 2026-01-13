@@ -4,6 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const { user, singInUser } = useAuth();
@@ -19,16 +20,12 @@ const Login = () => {
   const onSubmit = (data) => {
     singInUser(data.email, data.password)
       .then((res) => {
-        console.log(res.user);
-        
-        // Check if location state exists and has a 'from' property
+        toast.success("Log in successfully!")
         const redirectPath = location.state?.from || "/";
         navigate(redirectPath);
       })
       .catch((err) => {
-        console.log(err.message);
-        // You might want to show an error message to the user here
-        alert("Login failed: " + err.message);
+        toast.error(err.message)
       });
   };
 
