@@ -1,4 +1,6 @@
 import Container from "@/components/shared/Container";
+import useAuth from "@/hooks/useAuth";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -9,6 +11,18 @@ const SendParcel = () => {
   const [senderServiceCenters, setSenderServiceCenters] = useState([]);
   const [receiverServiceCenters, setReceiverServiceCenters] = useState([]);
   const [deliveryAmount, setDeliveryAmount] = useState(0);
+  const userinfo = useAuth();
+  const axiosSecure = useAxiosSecure();
+  const [parcelLoading,setParcelLoading] = useState(false);
+
+  console.log(userinfo);
+
+  const generateTrakingID = () => {
+    const data = new Date();
+    const datePart = data.toISOString().split("T")[0].replace(/-/g, "");
+    const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+    return `PCL-${datePart}-${rand}`;
+  };
 
   const {
     register,
@@ -270,14 +284,30 @@ const SendParcel = () => {
     });
 
     if (result.isConfirmed) {
+      setParcelLoading(true);
       const finalData = {
         ...data,
         deliveryAmount,
+        createdBy: userinfo.user.email,
+        createdAt: new Date().toISOString(),
+        paymentStatus: "unpaid",
+        deliveryStatus: "pending",
+        parcelID: generateTrakingID(),
       };
-
-      console.log("Final Submitted Data:", finalData);
-
-      toast.success("Booking confirmed successfully!");
+      try {
+        setParcelLoading(true);
+        const res = await axiosSecure.post("/parcels", finalData);
+        if (res.data.insertedId) {
+          setParcelLoading(false)
+          toast.success("Parcel send successfully!");
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Something went wrong!")
+        setParcelLoading(false)
+      }finally{
+        setParcelLoading(false);
+      }
     }
   };
 
@@ -804,7 +834,7 @@ const SendParcel = () => {
           type="submit"
           className="rounded-md bg-[#84cc16] px-8 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-[#65a30d]"
         >
-          Proceed to Confirm Booking
+          Proceed to Confirm {parcelLoading&&<span className="loading loading-spinner text-success"></span>}
         </button>
       </form>
     </Container>
