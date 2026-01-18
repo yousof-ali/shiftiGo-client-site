@@ -7,16 +7,21 @@ import "aos/dist/aos.css";
 import Aos from "aos";
 import Authprovider from "./context/authContext/Authprovider";
 import { Toaster } from "react-hot-toast";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 Aos.init();
+
+const queryclient = new QueryClient()
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <div className="font-urbanist">
-      <Authprovider>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" reverseOrder={false} />
-      </Authprovider>
+      <QueryClientProvider client={queryclient}>
+        <Authprovider>
+          <RouterProvider router={router} />
+          <Toaster position="top-right" reverseOrder={false} />
+        </Authprovider>
+      </QueryClientProvider>
     </div>
   </StrictMode>
 );

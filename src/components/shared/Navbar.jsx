@@ -6,13 +6,11 @@ import { Menu, X } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import toast from "react-hot-toast";
 
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
-  const { user ,logOut} = useAuth();
+  const { user, logOut } = useAuth();
   const navigate = useNavigate();
-  
 
   const linksData = [
     {
@@ -30,6 +28,10 @@ const Navbar = () => {
     {
       name: "Coverage",
       route: "/coverage",
+    },
+    user && {
+      name: "Dashboard",
+      route: "/dashboard/my-parcels",
     },
     {
       name: "Pricing",
@@ -78,12 +80,11 @@ const Navbar = () => {
   );
 
   const handleLogout = () => {
-     logOut()
-     .then(_ => {
+    logOut().then((_) => {
       toast.success("Log out Success!");
-      navigate("/")
-     })
-  }
+      navigate("/");
+    });
+  };
 
   return (
     <div className="py-4 border-b relative">
@@ -109,7 +110,9 @@ const Navbar = () => {
               <Button onClick={handleLogout}>Log Out</Button>
             ) : (
               <>
-                <Link to={"/login"}><Button variant="outline">Login</Button></Link>
+                <Link to={"/login"}>
+                  <Button variant="outline">Login</Button>
+                </Link>
                 <Button className={"hidden md:block"}>Be a rider</Button>
               </>
             )}
@@ -152,9 +155,11 @@ const Navbar = () => {
               <Button onClick={handleLogout}>Log Out</Button>
             ) : (
               <>
-                <Link to={"/login"}><Button variant="outline" onClick={() => setIsOpen(false)}>
-                  Login 
-                </Button></Link>
+                <Link to={"/login"}>
+                  <Button variant="outline" onClick={() => setIsOpen(false)}>
+                    Login
+                  </Button>
+                </Link>
                 <Button onClick={() => setIsOpen(false)}>Be a rider</Button>
               </>
             )}
