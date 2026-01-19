@@ -7,7 +7,10 @@ const DashboardLayout = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const routes = [{ label: "My Parcel", link: "/dashboard/my-parcels" }];
+  const routes = [
+    { label: "Home", link: "/dashboard", end: true },
+    { label: "My Parcel", link: "/dashboard/my-parcels" },
+  ];
 
   console.log(user);
 
@@ -26,9 +29,10 @@ const DashboardLayout = () => {
               <li key={indx} className="w-full">
                 <NavLink
                   to={l.link}
+                  end={l.end}
                   className={({ isActive }) =>
                     `block text-sm w-full px-4 font-medium py-2 rounded-md
-           ${isActive ? "bg-[#5EBB2B] text-white" : "hover:bg-[#5ebb2b1a]"}`
+    ${isActive ? "bg-[#5EBB2B] text-white" : "hover:bg-[#5ebb2b1a]"}`
                   }
                 >
                   {l.label}
@@ -104,12 +108,10 @@ const DashboardLayout = () => {
                 <li key={indx}>
                   <NavLink
                     to={l.link}
-                    onClick={() => setIsOpen(false)}
+                    end={l.end}
                     className={({ isActive }) =>
-                      `block text-sm px-4 py-2 rounded-md font-medium
-                ${
-                  isActive ? "bg-[#5EBB2B] text-white" : "hover:bg-[#5ebb2b1a]"
-                }`
+                      `block text-sm w-full px-4 font-medium py-2 rounded-md
+    ${isActive ? "bg-[#5EBB2B] text-white" : "hover:bg-[#5ebb2b1a]"}`
                     }
                   >
                     {l.label}

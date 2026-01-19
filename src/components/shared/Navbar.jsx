@@ -59,9 +59,9 @@ const Navbar = () => {
     <>
       {linksData.map((name) => {
         return (
-          <li key={name.name}>
+          <li key={name?.name}>
             <NavLink
-              to={name.route}
+              to={name?.route}
               onClick={() => setIsOpen(false)}
               className={({ isActive }) =>
                 `block py-2 md:text-lg transition-colors ${
@@ -71,7 +71,7 @@ const Navbar = () => {
                 }`
               }
             >
-              {name.name}
+              {name?.name}
             </NavLink>
           </li>
         );

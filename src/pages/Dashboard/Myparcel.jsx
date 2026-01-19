@@ -3,19 +3,54 @@ import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 const Myparcel = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [selectedParcel, setSelectedParcel] = useState(null);
 
-  const { data: parcels } = useQuery({
+  const {
+    data: parcels,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["parcels", user.email],
     queryFn: async () => {
       const res = await axiosSecure.get(`/parcels?email=${user.email}`);
       return res.data;
     },
   });
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        console.log(id);
+        try {
+          const res = await axiosSecure.delete(`/parcel/${id}`);
+          console.log(res);
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+            });
+            refetch()
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    });
+  };
   return (
     <div className="bg-white rounded-md shadow-sm p-4">
       <h2 className="text-lg font-semibold mb-4">My Parcels</h2>
@@ -68,16 +103,20 @@ const Myparcel = () => {
                 <td className="px-4 py-3  text-center">
                   <div className="flex justify-center gap-2">
                     <button
-                    onClick={() => setSelectedParcel(parcel)}
-                    className="px-3 py-1 text-nowrap cursor-pointer text-sm rounded bg-[#5EBB2B] text-white"
-                  >
-                    View details
-                  </button>
-                  <button
-                    className="px-3 py-1 cursor-pointer text-sm rounded bg-sky-400 text-white"
-                  >
-                    Payment
-                  </button>
+                      onClick={() => setSelectedParcel(parcel)}
+                      className="px-3 py-1 text-nowrap cursor-pointer text-sm rounded bg-[#5EBB2B] text-white"
+                    >
+                      View details
+                    </button>
+                    <button className="px-3 py-1 cursor-pointer text-sm rounded bg-sky-400 text-white">
+                      Payment
+                    </button>
+                    <button
+                      onClick={() => handleDelete(parcel._id)}
+                      className="px-3 py-1 cursor-pointer text-sm rounded bg-red-400 text-white"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -95,7 +134,7 @@ const Myparcel = () => {
               onClick={() => setSelectedParcel(null)}
               className="absolute cursor-pointer top-3 right-3 text-gray-500 hover:text-black"
             >
-              <X/>
+              <X />
             </button>
 
             <h3 className="text-lg font-semibold mb-4">Parcel Details</h3>
@@ -108,23 +147,31 @@ const Myparcel = () => {
 
               <div className="flex justify-between">
                 <span className="font-medium">Receiver Region</span>
-                <span className="capitalize">{selectedParcel.receiverRegion}</span>
+                <span className="capitalize">
+                  {selectedParcel.receiverRegion}
+                </span>
               </div>
 
               <div className="flex justify-between">
                 <span className="font-medium">Receiver Service Center</span>
                 <span>
-                 <span className="font-medium">{selectedParcel.receiverServiceCenter}</span>
+                  <span className="font-medium">
+                    {selectedParcel.receiverServiceCenter}
+                  </span>
                 </span>
               </div>
 
               <div className="flex justify-between">
                 <span className="font-medium">Receiver Contact</span>
-                <span className="font-medium">{selectedParcel.receiverContact}</span>
+                <span className="font-medium">
+                  {selectedParcel.receiverContact}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Delivery Instruction</span>
-                <span className="font-medium">{selectedParcel.deliveryInstruction}</span>
+                <span className="font-medium">
+                  {selectedParcel.deliveryInstruction}
+                </span>
               </div>
 
               <div className="flex justify-between">

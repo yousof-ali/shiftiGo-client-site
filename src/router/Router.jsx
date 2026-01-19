@@ -9,7 +9,7 @@ import SendParcel from "@/pages/SendParcel/SendParcel";
 import PrivateRoute from "./PrivateRoute";
 import Myparcel from "@/pages/Dashboard/Myparcel";
 import DashboardLayout from "@/layouts/DashboardLayout";
-
+import DashboardHome from "@/pages/Dashboard/Home";
 
 export const router = createBrowserRouter([
   {
@@ -21,18 +21,18 @@ export const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path:"coverage",
-        Component:Coverage
+        path: "coverage",
+        Component: Coverage,
       },
-      
+
       {
         path: "sendParcel",
         element: (
           <PrivateRoute>
             <SendParcel />
           </PrivateRoute>
-        )
-      }
+        ),
+      },
     ],
   },
   {
@@ -50,16 +50,21 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path:"/dashboard",
-    element:<PrivateRoute>
-      <DashboardLayout></DashboardLayout>
-    </PrivateRoute>,
-    children:[
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayout></DashboardLayout>
+      </PrivateRoute>
+    ),
+    children: [
       {
-        path:"my-parcels",
-        Component:Myparcel
-      }
-    ]
-    
-  }
+        index: true,
+        Component: DashboardHome,
+      },
+      {
+        path: "my-parcels",
+        Component: Myparcel,
+      },
+    ],
+  },
 ]);
