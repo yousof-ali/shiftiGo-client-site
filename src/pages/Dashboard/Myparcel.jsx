@@ -3,12 +3,14 @@ import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
 const Myparcel = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [selectedParcel, setSelectedParcel] = useState(null);
+  const navigate = useNavigate()
 
   const {
     data: parcels,
@@ -51,6 +53,10 @@ const Myparcel = () => {
       }
     });
   };
+
+  const handlePay = (id) => {
+    navigate(`/dashboard/payment/${id}`)
+  }
   return (
     <div className="bg-white rounded-md shadow-sm p-4">
       <h2 className="text-lg font-semibold mb-4">My Parcels</h2>
@@ -108,7 +114,7 @@ const Myparcel = () => {
                     >
                       View details
                     </button>
-                    <button className="px-3 py-1 cursor-pointer text-sm rounded bg-sky-400 text-white">
+                    <button onClick={() => handlePay(parcel._id)} className="px-3 py-1 cursor-pointer text-sm rounded bg-sky-400 text-white">
                       Payment
                     </button>
                     <button

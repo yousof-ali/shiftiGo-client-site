@@ -31,7 +31,7 @@ const Navbar = () => {
     },
     user && {
       name: "Dashboard",
-      route: "/dashboard/my-parcels",
+      route: "/dashboard",
     },
     {
       name: "Pricing",
