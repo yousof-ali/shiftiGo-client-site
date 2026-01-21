@@ -45,13 +45,44 @@ const PaymentForm = () => {
       setError(error.message);
     } else {
       setError("");
-      toast.success("Payment method created");
+      
     }
+
+    const res = await axiosSecure.post('/create-payment-intent',{
+      amount:parcel.deliveryAmount,
+      id
+    })
+
+    const result = await stripe.confirmCardPayment(res.data.clientSecret,{
+      payment_method:{
+        card:elements.getElement(CardElement),
+        billing_details:{
+          name:"",
+
+        },
+      },
+    });
+    
+    if(result.error){
+      console.log(result.error.message)
+      toast.error(result.error.message);
+    }else{
+      if(result.paymentIntent.status === 'succeeded') {
+        console.log("Payment Succeeded!");
+        toast.success("Payment Succeeded")
+      }
+    }
+
+    
   };
+
+
 
   if (isLoading) {
     return <p className="text-center py-10">Loading...</p>;
   }
+
+  console.log(parcel.deliveryAmount)
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 ">
