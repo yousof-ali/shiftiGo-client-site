@@ -10,6 +10,7 @@ const DashboardLayout = () => {
   const routes = [
     { label: "Home", link: "/dashboard", end: true },
     { label: "My Parcel", link: "/dashboard/my-parcels" },
+    { label: "Transaction History", link: "/dashboard/transaction-history" },
   ];
 
   console.log(user);

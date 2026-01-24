@@ -234,9 +234,9 @@ const SendParcel = () => {
         `Parcel Type: Non-Document`,
         `Weight: ${weight} KG`,
         `Delivery Area: ${areaText}`,
-        `Base Charge (first 3 KG): ৳${isWithinCity ? 110 : 150}`,
-        `Extra Weight: ${extraKg} KG × ৳40 = ৳${extraKg * 40}`,
-        !isWithinCity && `Outside City Extra Charge: ৳40`,
+        `Base Charge (first 3 KG): ${isWithinCity ? 110 : 150}`,
+        `Extra Weight: ${extraKg} KG × 40 = ${extraKg * 40}`,
+        !isWithinCity && `Outside City Extra Charge: 40`,
       ].filter(Boolean),
     };
   };

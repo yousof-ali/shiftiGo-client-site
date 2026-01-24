@@ -1,14 +1,19 @@
+import useAuth from "@/hooks/useAuth";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState("");
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  console.log(user);
 
   const { id } = useParams();
   const axiosSecure = useAxiosSecure();
@@ -20,6 +25,8 @@ const PaymentForm = () => {
       return res.data;
     },
   });
+
+  console.log(parcel);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,62 +52,63 @@ const PaymentForm = () => {
       setError(error.message);
     } else {
       setError("");
-      
     }
 
-    const res = await axiosSecure.post('/create-payment-intent',{
-      amount:parcel.deliveryAmount,
-      id
-    })
+    const res = await axiosSecure.post("/create-payment-intent", {
+      amount: parcel.deliveryAmount,
+      id,
+    });
 
-    const result = await stripe.confirmCardPayment(res.data.clientSecret,{
-      payment_method:{
-        card:elements.getElement(CardElement),
-        billing_details:{
-          name:"",
-
+    const result = await stripe.confirmCardPayment(res.data.clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: user?.displayName,
+          email: user?.email,
         },
       },
     });
-    
-    if(result.error){
-      console.log(result.error.message)
+
+    if (result.error) {
+      console.log(result.error.message);
       toast.error(result.error.message);
-    }else{
-      if(result.paymentIntent.status === 'succeeded') {
-        console.log("Payment Succeeded!");
-        toast.success("Payment Succeeded")
+    } else {
+      if (result.paymentIntent.status === "succeeded") {
+        const payload = {
+          parcelID: parcel._id,
+          email: user?.email,
+          amount: parcel.deliveryAmount,
+          transactionId: result.paymentIntent.id,
+        };
+        console.log(payload)
+        const res = await axiosSecure.post("/payments", payload);
+        console.log(res)
+        if (res.data.insertedId) {
+          console.log(res);
+          toast.success("Payment Succeeded");
+          navigate("/dashboard/my-parcels")
+        }
       }
     }
-
-    
   };
-
-
 
   if (isLoading) {
     return <p className="text-center py-10">Loading...</p>;
   }
 
-  console.log(parcel.deliveryAmount)
+  console.log(parcel.deliveryAmount);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 ">
       <div className="w-full max-w-md bg-white rounded-md shadow-sm overflow-hidden">
-
         {/* Header */}
         <div className="bg-primary px-6 py-4">
-          <h2 className="text-lg font-semibold text-white">
-            Parcel Payment
-          </h2>
-          <p className="text-sm text-indigo-100">
-            ID: {parcel.parcelID}
-          </p>
+          <h2 className="text-lg font-semibold text-white">Parcel Payment</h2>
+          <p className="text-sm text-indigo-100">ID: {parcel.parcelID}</p>
         </div>
 
         {/* Parcel Summary */}
         <div className="p-6 space-y-4">
-
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">Receiver</span>
             <span className="font-medium text-gray-800">
@@ -137,9 +145,7 @@ const PaymentForm = () => {
 
           {/* Amount */}
           <div className="border-t pt-4 flex justify-between items-center">
-            <span className="text-gray-600 font-medium">
-              Total Amount
-            </span>
+            <span className="text-gray-600 font-medium">Total Amount</span>
             <span className="text-2xl font-bold text-primary">
               {parcel.deliveryAmount}
             </span>
@@ -167,9 +173,7 @@ const PaymentForm = () => {
               />
             </div>
 
-            {error && (
-              <p className="text-xs text-red-600">{error}</p>
-            )}
+            {error && <p className="text-xs text-red-600">{error}</p>}
 
             <button
               type="submit"

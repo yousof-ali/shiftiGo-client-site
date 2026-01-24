@@ -11,6 +11,7 @@ import Myparcel from "@/pages/Dashboard/Myparcel";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import DashboardHome from "@/pages/Dashboard/Home";
 import Payment from "@/pages/Dashboard/payment/Payment";
+import TransactionHistory from "@/pages/Dashboard/TransactionHistory";
 
 export const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ export const router = createBrowserRouter([
       {
         path:"payment/:id",
         Component:Payment
+      },
+      {
+        path:"transaction-history",
+        Component:TransactionHistory
       }
     ],
   },
