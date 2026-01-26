@@ -12,6 +12,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import DashboardHome from "@/pages/Dashboard/Home";
 import Payment from "@/pages/Dashboard/payment/Payment";
 import TransactionHistory from "@/pages/Dashboard/TransactionHistory";
+import TrackParcel from "@/pages/Dashboard/TrackParcel";
 
 export const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ export const router = createBrowserRouter([
       {
         path:"transaction-history",
         Component:TransactionHistory
+      },
+      {
+        path:"track-parcel",
+        Component:TrackParcel
       }
     ],
   },

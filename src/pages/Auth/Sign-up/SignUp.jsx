@@ -1,15 +1,20 @@
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import toast from "react-hot-toast";
+import { Image } from "lucide-react";
+import axios from "axios";
+import { updateProfile } from "firebase/auth";
+import { auth } from "@/firebase/firebase.init";
 
 const SignUp = () => {
-  const { user, createUser } = useAuth();
+  const { createUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [imgUrl, setImageUrl] = useState("");
 
   const {
     register,
@@ -20,13 +25,33 @@ const SignUp = () => {
   const onSubmit = (data) => {
     createUser(data.email, data.password)
       .then((res) => {
-        toast.success("Account create successfully!")
-        navigate(location?.state ? location.state : "/");
+        updateProfile(auth.currentUser, {
+          displayName: data.name,
+          photoURL: imgUrl,
+        }).then((_) => {
+          toast.success("Account create successfully!");
+          navigate(location?.state ? location.state : "/");
+        });
       })
       .catch((err) => {
         console.log(err.message);
         toast.error(err.message);
       });
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`,
+        formData,
+      );
+      console.log(res.data.data.url);
+      setImageUrl(res.data.data.url);
+    }
   };
 
   return (
@@ -46,6 +71,9 @@ const SignUp = () => {
             placeholder="Name"
             {...register("name", { required: true })}
           />
+          {errors.name?.type === "required" && (
+            <p className="text-xs text-red-600">Name is required!</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1">
@@ -56,11 +84,10 @@ const SignUp = () => {
             placeholder="Email"
             {...register("email", { required: true })}
           />
+          {errors.email?.type === "required" && (
+            <p className="text-xs text-red-600">Email is required!</p>
+          )}
         </div>
-
-        {errors.email?.type === "required" && (
-          <p className="text-xs text-red-600">Email is required!</p>
-        )}
 
         <div className="flex flex-col gap-1">
           <label className="label mt-3">Password</label>
@@ -79,6 +106,38 @@ const SignUp = () => {
             </p>
           )}
         </div>
+
+        {/* Profile Picture */}
+        <div className="flex flex-col gap-2 mt-4">
+          <label className="label">Profile Picture</label>
+
+          <label
+            htmlFor="profileImage"
+            className=" h-32  border-2 rounded-md border-dashed flex items-center justify-center cursor-pointer overflow-hidden hover:border-primary transition"
+          >
+            {imgUrl ? (
+              <img
+                src={imgUrl}
+                alt="Preview"
+                className="w-28 h-28 object-cover"
+              />
+            ) : (
+              <span className="text-sm flex flex-col items-center text-gray-400 text-center px-2">
+                <Image />
+                Click to upload
+              </span>
+            )}
+          </label>
+
+          <input
+            type="file"
+            id="profileImage"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+        </div>
+
         <Button className={"w-full mt-6 py-6"}>Sign Up</Button>
       </form>
 

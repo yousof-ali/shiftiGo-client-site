@@ -11,6 +11,7 @@ const DashboardLayout = () => {
     { label: "Home", link: "/dashboard", end: true },
     { label: "My Parcel", link: "/dashboard/my-parcels" },
     { label: "Transaction History", link: "/dashboard/transaction-history" },
+    { label: "Track Parcel", link: "/dashboard/track-parcel" },
   ];
 
   console.log(user);

@@ -85,7 +85,7 @@ const PaymentForm = () => {
         console.log(res)
         if (res.data.insertedId) {
           console.log(res);
-          toast.success("Payment Succeeded");
+          toast.success(`Payment Succeeded! TxnId: ${result.paymentIntent.id}`);
           navigate("/dashboard/my-parcels")
         }
       }
