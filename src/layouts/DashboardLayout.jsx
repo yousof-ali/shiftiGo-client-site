@@ -14,7 +14,7 @@ const DashboardLayout = () => {
     { label: "Track Parcel", link: "/dashboard/track-parcel" },
   ];
 
-  console.log(user);
+ 
 
   return (
     <div className="lg:flex ">

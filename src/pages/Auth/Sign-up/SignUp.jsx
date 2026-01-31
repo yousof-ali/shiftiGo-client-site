@@ -9,12 +9,14 @@ import { Image } from "lucide-react";
 import axios from "axios";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/firebase/firebase.init";
+import usePublicApi from "@/hooks/usePublicApi";
 
 const SignUp = () => {
   const { createUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [imgUrl, setImageUrl] = useState("");
+  const publicApi = usePublicApi();
 
   const {
     register,
@@ -28,9 +30,23 @@ const SignUp = () => {
         updateProfile(auth.currentUser, {
           displayName: data.name,
           photoURL: imgUrl,
-        }).then((_) => {
-          toast.success("Account create successfully!");
-          navigate(location?.state ? location.state : "/");
+        }).then(async (_) => {
+          try {
+            const userInfo = {
+              name: data.name,
+              email: data.email,
+              role: "user",
+              createdAt: new Date().toISOString(),
+              lastLogIn: new Date().toISOString(),
+            };
+            const res = await publicApi.post('/user',userInfo);
+            console.log(res);
+            toast.success("Account create successfully!");
+            navigate(location?.state ? location.state : "/");
+          } catch (err) {
+            console.log(err);
+          }
+          
         });
       })
       .catch((err) => {

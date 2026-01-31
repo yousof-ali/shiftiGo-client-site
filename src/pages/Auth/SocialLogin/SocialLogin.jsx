@@ -1,4 +1,5 @@
 import useAuth from "@/hooks/useAuth";
+import usePublicApi from "@/hooks/usePublicApi";
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
 
@@ -6,13 +7,26 @@ const SocialLogin = () => {
   const { singInWithGoogle } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const publicApi = usePublicApi();
 
   const handleGoogleSignIn = () => {
     singInWithGoogle()
-      .then((res) => {
-        console.log(res.user);
-        const redirectPath = location.state?.from || "/";
-        navigate(redirectPath);
+      .then(async (res) => {
+        try {
+          const userInfo = {
+            name: res.user.displayName,
+            email: res.user.email,
+            role: "user",
+            createdAt: new Date().toISOString(),
+            lastLogIn: new Date().toISOString(),
+          };
+          const result = await publicApi.post("/user", userInfo);
+          console.log(result);
+          const redirectPath = location.state?.from || "/";
+          navigate(redirectPath);
+        } catch (err) {
+          console.log(err);
+        }
       })
       .catch((err) => {
         console.log(err.message);

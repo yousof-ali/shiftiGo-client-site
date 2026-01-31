@@ -9,11 +9,13 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase.init";
+import usePublicApi from "@/hooks/usePublicApi";
 
 const googleProvider = new GoogleAuthProvider();
 const Authprovider = ({ children }) => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
+  const publicApi = usePublicApi()
 
   const createUser = (email, password) => {
     setLoading(true)
@@ -37,8 +39,21 @@ const Authprovider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
       setLoading(false);
+      setUser(currentUser);
+      if(currentUser){
+        const user = {
+          email:currentUser?.email
+        };
+        publicApi.post("/jwt-token",user,{withCredentials:true})
+        .then((res) => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+    
     });
     return () => {
       unsubscribe();
