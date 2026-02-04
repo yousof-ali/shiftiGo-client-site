@@ -1,6 +1,6 @@
 import Container from "@/components/shared/Container";
 import useAuth from "@/hooks/useAuth";
-import useAxiosSecure from "@/hooks/useAxiosSecure";
+import usePublicApi from "@/hooks/usePublicApi";
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ const SendParcel = () => {
   const [receiverServiceCenters, setReceiverServiceCenters] = useState([]);
   const [deliveryAmount, setDeliveryAmount] = useState(0);
   const userinfo = useAuth();
-  const axiosSecure = useAxiosSecure();
+  const publicApi = usePublicApi()
   const [parcelLoading,setParcelLoading] = useState(false);
 
   console.log(userinfo);
@@ -296,7 +296,7 @@ const SendParcel = () => {
       };
       try {
         setParcelLoading(true);
-        const res = await axiosSecure.post("/parcels", finalData);
+        const res = await publicApi.post("/parcels", finalData);
         if (res.data.insertedId) {
           setParcelLoading(false)
           toast.success("Parcel send successfully!");

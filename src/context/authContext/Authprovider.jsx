@@ -39,7 +39,6 @@ const Authprovider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setLoading(false);
       setUser(currentUser);
       if(currentUser){
         const user = {
@@ -48,9 +47,13 @@ const Authprovider = ({ children }) => {
         publicApi.post("/jwt-token",user,{withCredentials:true})
         .then((res) => {
           console.log(res)
+          setLoading(false)
         })
-        .catch(err => {
-          console.log(err)
+      }else{
+        publicApi.post("/logout",{},{withCredentials:true})
+        .then(res => {
+          console.log(res.data)
+          setLoading(false)
         })
       }
     

@@ -1,5 +1,6 @@
 import useAuth from "@/hooks/useAuth";
-import useAxiosSecure from "@/hooks/useAxiosSecure";
+import useSecureApi from "@/hooks/useAxiosSecure";
+import usePublicApi from "@/hooks/usePublicApi";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import React, { useState } from "react";
@@ -8,7 +9,8 @@ import Swal from "sweetalert2";
 
 const Myparcel = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
+  const publicApi = usePublicApi()
+  const secureApi = useSecureApi()
   const [selectedParcel, setSelectedParcel] = useState(null);
   const navigate = useNavigate();
 
@@ -19,10 +21,12 @@ const Myparcel = () => {
   } = useQuery({
     queryKey: ["parcels", user.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/parcels?email=${user.email}`);
+      const res = await secureApi.get(`/parcels?email=${user.email}`);
       return res.data;
     },
   });
+
+  console.log(parcels)
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -37,7 +41,7 @@ const Myparcel = () => {
       if (result.isConfirmed) {
         console.log(id);
         try {
-          const res = await axiosSecure.delete(`/parcel/${id}`);
+          const res = await publicApi.delete(`/parcel/${id}`);
           console.log(res);
           if (res.data.deletedCount > 0) {
             Swal.fire({

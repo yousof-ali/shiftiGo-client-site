@@ -13,6 +13,7 @@ import DashboardHome from "@/pages/Dashboard/Home";
 import Payment from "@/pages/Dashboard/payment/Payment";
 import TransactionHistory from "@/pages/Dashboard/TransactionHistory";
 import TrackParcel from "@/pages/Dashboard/TrackParcel";
+import BeARider from "@/pages/Be-a-rider/BeARider";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,14 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path:"be-a-rider",
+        element:(
+          <PrivateRoute>
+            <BeARider></BeARider>
+          </PrivateRoute>
+        )
+      }
     ],
   },
   {

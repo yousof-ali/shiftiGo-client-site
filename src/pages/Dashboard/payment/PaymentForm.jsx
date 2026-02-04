@@ -1,5 +1,5 @@
 import useAuth from "@/hooks/useAuth";
-import useAxiosSecure from "@/hooks/useAxiosSecure";
+import usePublicApi from "@/hooks/usePublicApi";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
@@ -16,12 +16,12 @@ const PaymentForm = () => {
   console.log(user);
 
   const { id } = useParams();
-  const axiosSecure = useAxiosSecure();
+  const publicApi = usePublicApi();
 
   const { data: parcel, isLoading } = useQuery({
     queryKey: ["parcel", id],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/parcel/${id}`);
+      const res = await publicApi.get(`/parcel/${id}`);
       return res.data;
     },
   });

@@ -1,14 +1,13 @@
 import useAuth from "@/hooks/useAuth";
-import useAxiosSecure from "@/hooks/useAxiosSecure";
+import usePublicApi from "@/hooks/usePublicApi";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
-import Swal from "sweetalert2";
+
 
 const TransactionHistory = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
+  const publicApi = usePublicApi()
   const [selectedParcel, setSelectedParcel] = useState(null);
 
   const {
@@ -18,7 +17,7 @@ const TransactionHistory = () => {
   } = useQuery({
     queryKey: ["transaction", user.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/transaction?email=${user.email}`);
+      const res = await publicApi.get(`/transaction?email=${user.email}`);
       return res.data;
     },
   });

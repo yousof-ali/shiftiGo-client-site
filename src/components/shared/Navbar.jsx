@@ -34,6 +34,10 @@ const Navbar = () => {
       route: "/dashboard",
     },
     {
+      name:"Be a Rider",
+      route:"/be-a-rider"
+    },
+    {
       name: "Pricing",
       route: "pricing",
     },
@@ -113,7 +117,7 @@ const Navbar = () => {
                 <Link to={"/login"}>
                   <Button variant="outline">Login</Button>
                 </Link>
-                <Button className={"hidden md:block"}>Be a rider</Button>
+               
               </>
             )}
           </div>
@@ -160,7 +164,7 @@ const Navbar = () => {
                     Login
                   </Button>
                 </Link>
-                <Button onClick={() => setIsOpen(false)}>Be a rider</Button>
+                
               </>
             )}
           </div>
